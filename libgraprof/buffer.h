@@ -25,6 +25,7 @@
 
 extern void *libgraprof_buf;
 extern unsigned long libgraprof_bufsize;
+extern unsigned long libgraprof_index;
 
 /* these macros are used by the intrumentation and the malloc hooks to
  * build an in-memory trace data block, that is written to disk upon
@@ -32,8 +33,10 @@ extern unsigned long libgraprof_bufsize;
  */
 
 #define buffer_enlarge(S) \
-  unsigned long index = libgraprof_bufsize; \
-  libgraprof_bufsize += (S); \
+  unsigned long index = libgraprof_index; \
+  libgraprof_index += (S); \
+  if (libgraprof_index >= libgraprof_bufsize) \
+    libgraprof_bufsize = 2 * libgraprof_index; \
   libgraprof_buf = realloc(libgraprof_buf, libgraprof_bufsize)
 
 #define buffer_append(T, V) \

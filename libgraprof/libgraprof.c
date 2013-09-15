@@ -33,8 +33,9 @@
 FILE *libgraprof_out = NULL;
 void *libgraprof_buf = NULL;
 unsigned long libgraprof_bufsize = 0;
+unsigned long libgraprof_index = 0;
 
-static void 
+static void
 __attribute__ ((constructor))
 libgraprof_init ()
 {
@@ -70,13 +71,13 @@ libgraprof_fini ()
     buffer_append(char, 'E');
     buffer_append(unsigned long long, highrestimer_get());
 
-    size_t res; 
-    res = fwrite(&libgraprof_bufsize, sizeof(unsigned long), 1, libgraprof_out);
+    size_t res;
+    res = fwrite(&libgraprof_index, sizeof(unsigned long), 1, libgraprof_out);
     if (res != 1)
       perror("libgraprof: error writing trace file.");
-      
-    res = fwrite(libgraprof_buf, 1, libgraprof_bufsize, libgraprof_out);
-    if (res != libgraprof_bufsize)
+
+    res = fwrite(libgraprof_buf, 1, libgraprof_index, libgraprof_out);
+    if (res != libgraprof_index)
       perror("libgraprof: error writing trace file.");
 
     fclose(libgraprof_out);
